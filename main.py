@@ -40,9 +40,6 @@ def analyze(request: Request, cv_file: UploadFile = File(...), job_description: 
     Saves the uploaded CV PDF, runs the crew with the CV path and pasted
     job description as inputs, and renders the resulting roadmap.
 
-    Note: this is a plain `def` (not `async def`) on purpose -- FastAPI runs
-    sync routes in a worker thread, which avoids the "already running event
-    loop" conflict with CrewAI's own internal event loop.
     """
     saved_name = f"{uuid.uuid4().hex}_{cv_file.filename}"
     saved_path = UPLOAD_DIR / saved_name

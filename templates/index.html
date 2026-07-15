@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkillGap Analyzer</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>SkillGap Analyzer</h2>
+    <p>Upload your CV and paste the job description to get a personalized learning roadmap.</p>
+
+    <form action="/analyze" method="post" enctype="multipart/form-data">
+      <label for="cv_file"><b>CV (PDF)</b></label>
+      <input type="file" id="cv_file" name="cv_file" accept="application/pdf" required>
+
+      <label for="job_description"><b>Job Description</b></label>
+      <textarea id="job_description" name="job_description" rows="12"
+                placeholder="Paste the job description here..." required></textarea>
+
+      <button type="submit">Analyze</button>
+    </form>
+  </div>
+</body>
+</html>

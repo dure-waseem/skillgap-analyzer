@@ -1,0 +1,66 @@
+{
+  // Display name for this crew
+  "name": "SkillGap_Analyzer",
+
+  // Agents to include — each must have a matching agents/<name>.jsonc file
+  "agents": ["job_description_analyst", "cv_reader", "cv_evaluator", "career_coach"],
+
+  // Task definitions — executed in order for sequential process
+  "tasks": [
+    {
+      // Task identifier
+      "name": "analyze_jd_task",
+
+      
+      "description": "Analyze the following job description and extract all requirements:\n\n{job_description}\n\nCategorize into:\n1. Must-Have Technical Skills\n2. Nice-to-Have Skills\n3. Required Experience Level\n4. Tools and Technologies\n5. Soft Skills",
+
+      "expected_output": "A structured JSON with five categories: must_have_skills, nice_to_have_skills, experience_level, tools_technologies, soft_skills. Each category contains a list of items.",
+
+      // Which agent handles this task
+      "agent": "job_description_analyst",
+      "output_file": "output/1_jd_analysis.txt"
+
+      // "tools": [],
+  
+    },
+    {
+      "name": "read_cv_task",
+      "description": "Use the PDF Reader Tool to extract the full text of the candidate's CV located at {cv_pdf_path}. The raw extracted text may have layout artifacts from multi-column PDF designs (e.g. a contact/skills sidebar and an experience column merged onto the same lines, out of order). If you detect this, reconstruct the text into clean, correctly-ordered sections using context clues like section headers (CONTACT, SKILLS, EXPERIENCE, EDUCATION, etc). Do NOT summarize, shorten, paraphrase, or omit any content -- every detail, date, and bullet point must be preserved exactly as written, only the ordering/structure may be fixed. If the extracted text is already clean and single-column, return it unchanged.",
+      "expected_output": "The complete CV text, in correct reading order with all original content preserved. No summarizing, no commentary, no invented content -- only reordering/restructuring where the PDF layout caused lines to merge incorrectly.",
+      "agent": "cv_reader",
+      "output_file": "output/1b_cv_text.txt"
+    },
+    {
+      "name": "evaluate_cv_task",
+      "description": "Compare the candidate's CV text against the JD requirements. For each requirement, score it as Matched, Partial, or Missing with a reason.",
+      "expected_output": "A structured JSON with each requirement scored as Matched, Partial, or Missing, with a one-line reason for each score. Include an overall match percentage.",
+      "agent": "cv_evaluator",
+      "context": ["analyze_jd_task", "read_cv_task"],
+      "output_file": "output/2_cv_evaluation.txt"
+    },
+    {
+      "name": "roadmap_task_task",
+      "description": "You are an expert career coach. Using the candidate's raw CV text and the CV Evaluator's scored gaps, build a highly practical, no-fluff learning roadmap for every skill marked Missing or Partial.\n\nFollow these rules strictly:\n- Order skills by impact: which skill, if learned, would MOST improve the candidate's chances of getting this job\n- Label the first skill as (Most Important)\n- For each skill, recommend ONE specific Udemy course with the instructor's name — not just a topic, a real course title\n- For each skill, recommend ONE specific free YouTube video or playlist with the channel name\n- For each skill, give ONE specific hands-on exercise the candidate can start TODAY using free tools (Google Colab, free tiers, existing projects etc.)\n- Give a realistic time estimate in days or weeks\n- Do NOT give vague advice like 'practice more' or 'read the docs' — be specific\n- Tailor all recommendations to the candidate's existing skill level from their CV — do not recommend beginner content for things they already know\n- End with a total time estimate if the candidate focuses full-time",
+      "expected_output": "A practical learning plan in this EXACT format (in order tell skill most important at first then less important and then more less important and so on):\n\nHere is a practical learning plan for each:\n1. [Skill Name]\n\n* Course: [Course name] by [Instructor] on Udemy — [one line reason]\n* Then: [follow-up course if any]\n* Practical: [A specific hands-on exercise they can do right now]\n* Time: [X weeks/days]\n\n2. [Next Skill]\n\n* YouTube: [Channel name] — [Video title] — free, [one line reason]\n* Practical: [Specific hands-on task]\n* Time: [X weeks/days]\n\n...and so on for all gaps, ordered High to Low priority.\n\nEnd with: 'Total time if focused: X months covering everything above.'",
+      "agent": "career_coach",
+      "context": ["read_cv_task", "evaluate_cv_task"],
+      "output_file": "output/3_learning_roadmap.txt"
+    }
+
+  ],
+
+
+  "process": "sequential",
+
+  "verbose": true,
+
+  "memory": false,
+  "max_rpm": 5
+
+  // "inputs": {
+
+  //   "cv_pdf_path":"cv.pdf",
+  //   "job_description":"🚀Hiring — AI / ML Engineer (Agentic Systems & Applied ML) 📍 Remote | Full-Time 🏢 Ecognition Labs (USA-based AI/ML Consultancy) We're looking for a versatile AI/ML Engineer who can train machine learning models, build production-grade multi-agent systems, and run open-weight LLMs on dedicated GPU infrastructure. This role combines classical machine learning, agent engineering, LLM applications, and the infrastructure required to deploy them at scale. 🔧 What You'll Do • Train, fine-tune, and deploy ML/DL models (Hugging Face → FastAPI) • Build LLM applications and multi-agent systems using LangGraph • Develop production-ready RAG systems (hybrid search, embeddings, re-ranking) • Implement evaluation, observability, and guardrails (RAGAS, LangSmith, Langfuse) • Self-host open-weight LLMs using vLLM / SGLang • Optimize inference through quantization, KV-cache management, and GPU utilization • Build backend services with FastAPI and contribute to React-based frontends ✅ Must-Have Skills • 3+ years of experience building and shipping ML/AI systems • Strong Python skills (NumPy, Pandas, scikit-learn, PyTorch/TensorFlow, Hugging Face) • Experience building LLM applications, agents, and RAG systems • Understanding of agent architectures, memory systems, prompt caching, and tool orchestration • Experience with model evaluation, observability, and backend engineering • Proficiency with modern AI coding tools such as Claude Code and Cursor ⭐ Nice to Have • LangGraph or CrewAI in production • LoRA / QLoRA fine-tuning • Vector databases at scale • MLOps / LLMOps experience • Cloud platforms (AWS, GCP, Azure) 🎁 What We Offer • Competitive salary • Flexible working hours • Remote-first culture • Opportunity to work on cutting-edge AI systems and products 📩 How to Apply Send your resume along with a short note about something you've built—such as a trained ML model, an agentic system, or a self-hosted LLM deployment. 📧 shohan@ecognitionlabs.com 🔗 More about the Role: https://lnkd.in/gqN2eAvX"
+
+  // }
+}

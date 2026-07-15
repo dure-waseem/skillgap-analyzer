@@ -1,0 +1,8 @@
+.env
+__pycache__/
+.DS_Store
+report.md
+uploads/
+output/
+.venv/
+cv.pdf

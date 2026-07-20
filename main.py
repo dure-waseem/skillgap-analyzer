@@ -2,12 +2,6 @@
 """
 FastAPI app for SkillGap Analyzer.
 
-Place this file at the ROOT of your project, alongside crew.jsonc, agents/, tools/,
-plus the new templates/ and static/ folders.
-
-Run with:
-    uv add fastapi "uvicorn[standard]" python-multipart jinja2
-    uv run uvicorn main:app --reload --port 8000
 """
 
 import shutil
@@ -51,9 +45,6 @@ def analyze(request: Request, cv_file: UploadFile = File(...), job_description: 
     Saves the uploaded CV PDF, runs the crew with the CV path and pasted
     job description as inputs, and renders the resulting roadmap.
 
-    Note: this is a plain `def` (not `async def`) on purpose -- FastAPI runs
-    sync routes in a worker thread, which avoids the "already running event
-    loop" conflict with CrewAI's own internal event loop.
     """
     file_id = uuid.uuid4().hex
     saved_name = f"{file_id}_{cv_file.filename}"

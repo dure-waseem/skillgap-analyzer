@@ -19,8 +19,6 @@ from crewai.project import load_crew
 
 BASE_DIR = Path(__file__).parent
 CREW_FILE = BASE_DIR / "crew.jsonc"
-# UPLOAD_DIR = BASE_DIR / "uploads"
-# UPLOAD_DIR.mkdir(exist_ok=True)
 S3_BUCKET_NAME = os.environ["S3_BUCKET_NAME"]
 s3_client = boto3.client("s3")
 
